@@ -1,0 +1,17 @@
+env: prod
+server:
+  host: 0.0.0.0
+  port: 8000
+database:
+  mysql_dsn: "${MYSQL_DSN}"
+  clickhouse_url: "${CLICKHOUSE_URL}"
+cache:
+  redis_url: "${REDIS_URL}"
+vector_store:
+  endpoint: "${VECTOR_STORE_URL}"
+security:
+  jwt_issuer: "retail-lowfreq"
+  jwt_exp_hours: 24
+  mfa_enabled: true
+observability:
+  prometheus_enabled: true

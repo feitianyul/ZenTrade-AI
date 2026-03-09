@@ -1,0 +1,17 @@
+env: dev
+server:
+  host: 0.0.0.0
+  port: 8000
+database:
+  mysql_dsn: "${MYSQL_DSN:-mysql+pymysql://user:pass@localhost:3306/retail_lowfreq}"
+  clickhouse_url: "${CLICKHOUSE_URL:-http://localhost:8123}"
+cache:
+  redis_url: "${REDIS_URL:-redis://localhost:6379/0}"
+vector_store:
+  endpoint: "${VECTOR_STORE_URL:-http://localhost:8080}"
+security:
+  jwt_issuer: "retail-lowfreq"
+  jwt_exp_hours: 24
+  mfa_enabled: true
+observability:
+  prometheus_enabled: true

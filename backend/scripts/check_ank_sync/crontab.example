@@ -1,0 +1,18 @@
+# AKShare 增量同步定时任务（北京时间）
+# 使用前请将 BACKEND_DIR 改为云主机上 backend 的实际路径，如 /opt/trading/backend
+# 安装方式一：crontab -l > /tmp/old_cron; (cat /tmp/old_cron; cat 本文件) | crontab -
+# 安装方式二：运行 install_cron.sh
+
+# 日更：周一到周五 15:30（收盘后）
+30 15 * * 1-5 cd BACKEND_DIR && PYTHONPATH=. python scripts/check_ank_sync/run_incremental_sync_scripts.py --frequency daily >> BACKEND_DIR/logs/check_ank_sync/cron_daily.log 2>&1
+
+# 周更：周六 09:00（交易所日历、A股列表）
+0 9 * * 6 cd BACKEND_DIR && PYTHONPATH=. python scripts/check_ank_sync/run_incremental_sync_scripts.py --frequency weekly >> BACKEND_DIR/logs/check_ank_sync/cron_weekly.log 2>&1
+
+# 季更：披露季+延后月 每周六 10:00（股东户数、财务指标、分红配股）
+# 财报法定截止后常延后，故 1,4,5 月(年报/一季)、8,9 月(半年)、10,11 月(三季) 每周六跑，脚本增量幂等
+0 10 * 1,4,5,8,9,10,11 6 cd BACKEND_DIR && PYTHONPATH=. python scripts/check_ank_sync/run_incremental_sync_scripts.py --frequency quarterly >> BACKEND_DIR/logs/check_ank_sync/cron_quarterly.log 2>&1
+
+# 半年更：半年报/年报披露季+延后月 每周六 11:00（十大股东）
+# 半年报约 8/31、年报约 4/30，延后则到 9/5 月，故 4,5,8,9 月每周六跑
+0 11 * 4,5,8,9 6 cd BACKEND_DIR && PYTHONPATH=. python scripts/check_ank_sync/run_incremental_sync_scripts.py --frequency semi_annual >> BACKEND_DIR/logs/check_ank_sync/cron_semi_annual.log 2>&1
